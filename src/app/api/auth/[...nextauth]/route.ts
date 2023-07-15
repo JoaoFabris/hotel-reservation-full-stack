@@ -17,5 +17,7 @@ export const authOptions: AuthOptions = {
 
 const handler = NextAuth(authOptions);
 
-export { handler as GET, handler as POST}
-// inicia na aplicação, e use os adapters q eu adaptei, no caso google adapter
+export { handler as GET, handler as POST };
+// inicia na aplicação, e use os provider q eu adaptei, no caso google adapter
+
+// adapter procura qual orm vc esta usando no caso prisma
