@@ -1,6 +1,6 @@
 import React from "react";
 import { prisma } from "@/lib/prisma";
-import TripIem from "@/components/TripItem";
+import TripItem from "@/components/TripItem";
 
 async function getTrips() {
     const trips = await prisma.trip.findMany({})
@@ -10,6 +10,7 @@ async function getTrips() {
 
 const RecommendedTrips = async () => {
     const data = await getTrips()
+
     return (
         <div className="container mx-auto p-5">
             <div className="flex items-center">
@@ -19,7 +20,7 @@ const RecommendedTrips = async () => {
             </div>
             <div className="flex flex-col items-center mt-5 gap-5">
                 {data.map((trips) => (
-                    <TripIem key={trips.id} trip={trips} />
+                    <TripItem key={trips.id} trip={trips} />
                 ))}
             </div>
         </div>
