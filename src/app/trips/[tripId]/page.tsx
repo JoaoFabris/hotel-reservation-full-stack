@@ -4,6 +4,7 @@ import TripHeader from "../components/TripHeader";
 import TripReservation from "../components/TripReservation";
 import TripDescription from "../components/TripDescription";
 import TripHighlights from "../components/TripHighlights";
+import TripLocation from "../components/TripLocation";
 
 
 const getTripDetails = async (tripId: string) => {
@@ -22,11 +23,12 @@ const TripDetails = async ({ params }: { params: { tripId: string } }) => {
     if (!trip) return null;
 
     return (
-      <div className="container mx-auto">
-        <TripHeader trip={trip} />
-        <TripReservation trip={trip}/>
-        <TripDescription description={trip.description}/>
-        <TripHighlights highlights={trip.highlights}/>
+        <div className="container mx-auto">
+            <TripHeader trip={trip} />
+            <TripReservation trip={trip} />
+            <TripDescription description={trip.description} />
+            <TripHighlights highlights={trip.highlights} />
+            <TripLocation location={trip.location} locationDescription={trip.locationDescription} />
         </div>
     );
 };
