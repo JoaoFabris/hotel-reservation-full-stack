@@ -8,7 +8,9 @@ import Button from "@/components/Button";
 import { Controller, useForm } from "react-hook-form";
 
 interface TripReservationProps {
-    trip: Trip;
+    tripStartDate: Date;
+    tripEndDate: Date;
+    maxGuests: number;
 }
 
 interface TripReservationForm {
@@ -17,13 +19,20 @@ interface TripReservationForm {
     endDate: Date | null;
 }
 
-const TripReservation = ({ trip }: TripReservationProps) => {
-    const { register, handleSubmit, formState: { errors }, control, } = useForm<TripReservationForm>() // npm install react-hook-form para formulario
+const TripReservation = ({ maxGuests, tripStartDate, tripEndDate }: TripReservationProps) => {
+    const { register,
+         handleSubmit, 
+         formState: { errors }, 
+         control, 
+         watch
+        } = useForm<TripReservationForm>() // npm install react-hook-form para formulario
 
     const onSubmit = (data: any) => {
         console.log({ data });
 
     }
+
+    const startDate = watch("startDate") // caso a data inicial foi selecionada ele salva a data minima relativa ao q foi selecionada 
 
     return (
         <div className="flex flex-col px-5">
@@ -33,7 +42,7 @@ const TripReservation = ({ trip }: TripReservationProps) => {
                     rules={{
                         required: {
                             value: true,
-                            message: "Data inicial obrigatória",
+                            message: "Data inicial é obrigatória",
                         },
                     }}
                     control={control}
@@ -43,6 +52,7 @@ const TripReservation = ({ trip }: TripReservationProps) => {
                             errorMessage={errors?.startDate?.message}
                             selected={field.value}
                             placeholderText="Data Inicial"
+                            minDate={tripStartDate}
                             onChange={field.onChange}
                             className="w-full" />}
                 />
@@ -51,7 +61,7 @@ const TripReservation = ({ trip }: TripReservationProps) => {
                     rules={{
                         required: {
                             value: true,
-                            message: "Data final obrigatória",
+                            message: "Data final é obrigatória",
                         },
                     }}
                     control={control}
@@ -61,6 +71,8 @@ const TripReservation = ({ trip }: TripReservationProps) => {
                             errorMessage={errors?.endDate?.message}
                             selected={field.value}
                             placeholderText="Data final"
+                            maxDate={tripEndDate}
+                            minDate={startDate ?? tripStartDate}
                             onChange={field.onChange}
                             className="w-full" />}
                 />
@@ -72,7 +84,7 @@ const TripReservation = ({ trip }: TripReservationProps) => {
                     message: "Número de hóspedes é obrigatório",
                 }, // esse campo sera obrigatorio no input
 
-            })} placeholder={`Número de hóspedes (máx: ${trip.maxGuests})`}
+            })} placeholder={`Número de hóspedes (máx: ${maxGuests})`}
                 className="mt-4"
                 error={!!errors.guests}
                 errorMessage={errors?.guests?.message} />
