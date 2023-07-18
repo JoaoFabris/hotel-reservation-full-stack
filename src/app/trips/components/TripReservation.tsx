@@ -3,14 +3,15 @@
 import DatePicker from "@/components/DatePicker";
 import Input from "@/components/Input";
 import React from "react";
-import { Trip } from "@prisma/client";
 import Button from "@/components/Button";
 import { Controller, useForm } from "react-hook-form";
+import { differenceInDays } from "date-fns";
 
 interface TripReservationProps {
     tripStartDate: Date;
     tripEndDate: Date;
     maxGuests: number;
+    pricePerDay: number;
 }
 
 interface TripReservationForm {
@@ -19,20 +20,21 @@ interface TripReservationForm {
     endDate: Date | null;
 }
 
-const TripReservation = ({ maxGuests, tripStartDate, tripEndDate }: TripReservationProps) => {
+const TripReservation = ({ maxGuests, tripStartDate, tripEndDate, pricePerDay }: TripReservationProps) => {
     const { register,
-         handleSubmit, 
-         formState: { errors }, 
-         control, 
-         watch
-        } = useForm<TripReservationForm>() // npm install react-hook-form para formulario
+        handleSubmit,
+        formState: { errors },
+        control,
+        watch
+    } = useForm<TripReservationForm>() // npm install react-hook-form para formulario
 
     const onSubmit = (data: any) => {
         console.log({ data });
 
     }
 
-    const startDate = watch("startDate") // caso a data inicial foi selecionada ele salva a data minima relativa ao q foi selecionada 
+    const startDate = watch("startDate")
+    const endDate = watch("endDate") // caso a data inicial foi selecionada ele salva a data minima relativa ao q foi selecionada 
 
     return (
         <div className="flex flex-col px-5">
@@ -91,7 +93,9 @@ const TripReservation = ({ maxGuests, tripStartDate, tripEndDate }: TripReservat
 
             <div className="flex justify-between mt-3">
                 <p className="font-medium text-sm text-primaryDarker"> Total:</p>
-                <p className="font-medium text-sm text-primaryDarker"> R$2500</p>
+                <p className="font-medium text-sm text-primaryDarker">
+                {startDate && endDate ? `R$${differenceInDays(endDate, startDate) * pricePerDay}` ?? 1 : "R$0"}
+                </p>
             </div>
             <div className="w-full pb-10 border-b border-grayLighter">
                 <Button onClick={() => handleSubmit(onSubmit)()} className="mt-3 w-full">Reservar agora</Button>
