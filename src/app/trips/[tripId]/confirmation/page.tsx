@@ -34,9 +34,14 @@ const TripConfirmation = ({ params }: { params: { tripId: string } }) => {
                 }),
             });
 
-            const { trip, totalPrice } = await response.json();
-            setTotalPrice(totalPrice);
-            setTrip(trip);
+            const res = await response.json();
+
+            if (res?.error) {
+                return router.push("/") // evita q o usuario tente mudar a data manualmente na url... se o valor corresponder a algum erro, ele redireciona para ("/")
+            };
+
+            setTrip(res.trip);
+            setTotalPrice(res.totalPrice);
         };
 
         if (status === "unauthenticated") {
@@ -44,9 +49,7 @@ const TripConfirmation = ({ params }: { params: { tripId: string } }) => {
         }
     
         fetchTrip();
-    }, [status]) // Esse array é uma lista de valores de que o hook depende. Quando um desses valores mudar, o hook é chamado novamente.
-
-
+    }, [status, searchParams, params, router]) // Esse array é uma lista de valores de que o hook depende. Quando um desses valores mudar, o hook é chamado novamente.
 
     if (!trip) return null;
 
