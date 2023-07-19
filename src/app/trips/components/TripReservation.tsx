@@ -6,6 +6,7 @@ import React from "react";
 import Button from "@/components/Button";
 import { Controller, useForm } from "react-hook-form";
 import { differenceInDays } from "date-fns";
+import { useRouter } from "next/navigation";
 
 interface TripReservationProps {
     tripId: string;
@@ -22,30 +23,58 @@ interface TripReservationForm {
 }
 
 const TripReservation = ({ tripId, maxGuests, tripStartDate, tripEndDate, pricePerDay }: TripReservationProps) => {
-    const { register,
-        handleSubmit,
-        formState: { errors },
-        control,
-        watch
-    } = useForm<TripReservationForm>() // npm install react-hook-form para formulario
-
+    const {
+      register,
+      handleSubmit,
+      formState: { errors },
+      control,
+      watch,
+      setError,
+    } = useForm<TripReservationForm>();
+  
+    const router = useRouter();
+  
     const onSubmit = async (data: TripReservationForm) => {
-        const response = await fetch("/api/trips/check", {
-          method: "POST",
-          body: Buffer.from(
-            JSON.stringify({
-              startDate: data.startDate,
-              endDate: data.endDate,
-              tripId,
-            })
-          ),
+      const response = await fetch("/api/trips/check", {
+        method: "POST",
+        body: Buffer.from(
+          JSON.stringify({
+            startDate: data.startDate,
+            endDate: data.endDate,
+            tripId,
+          })
+        ),
+      });
+  
+      const res = await response.json();
+  
+      
+    if (res?.error?.code === "TRIP_ALREADY_RESERVED") {
+        setError("startDate", {
+          type: "manual",
+          message: "Esta data já está reservada.",
         });
-
-        const res = await response.json();
-
-        console.log({ res });
-        
-    }
+  
+        return setError("endDate", {
+          type: "manual",
+          message: "Esta data já está reservada.",
+        });
+      }
+  
+      if (res?.error?.code === "INVALID_START_DATE") {
+        return setError("startDate", {
+          type: "manual",
+          message: "Data inválida.",
+        });
+      }
+  
+      if (res?.error?.code === "INVALID_END_DATE") {
+        return setError("endDate", {
+          type: "manual",
+          message: "Data inválida.",
+        });
+      }
+    };
 
     const startDate = watch("startDate")
     const endDate = watch("endDate") // caso a data inicial foi selecionada ele salva a data minima relativa ao q foi selecionada 
@@ -108,7 +137,7 @@ const TripReservation = ({ tripId, maxGuests, tripStartDate, tripEndDate, priceP
             <div className="flex justify-between mt-3">
                 <p className="font-medium text-sm text-primaryDarker"> Total:</p>
                 <p className="font-medium text-sm text-primaryDarker">
-                {startDate && endDate ? `R$${differenceInDays(endDate, startDate) * pricePerDay}` ?? 1 : "R$0"}
+                    {startDate && endDate ? `R$${differenceInDays(endDate, startDate) * pricePerDay}` ?? 1 : "R$0"}
                 </p>
             </div>
             <div className="w-full pb-10 border-b border-grayLighter">
@@ -120,3 +149,7 @@ const TripReservation = ({ tripId, maxGuests, tripStartDate, tripEndDate, priceP
 };
 
 export default TripReservation;
+
+function setError(arg0: string, arg1: { type: string; message: string; }) {
+    throw new Error("Function not implemented.");
+}
