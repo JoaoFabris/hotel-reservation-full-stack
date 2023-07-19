@@ -74,6 +74,8 @@ const TripReservation = ({ tripId, maxGuests, tripStartDate, tripEndDate, priceP
           message: "Data inválida.",
         });
       }
+
+      router.push(`/trips/${tripId}/confirmation?startDate=${data.startDate?.toISOString()}&endDate=${data.endDate?.toISOString()}&guests=${data.guests}`);
     };
 
     const startDate = watch("startDate")
