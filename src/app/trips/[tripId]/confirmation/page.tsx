@@ -1,17 +1,25 @@
 'use client'
 
-import { Trip } from "@prisma/client";
 import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import { useSearchParams } from "next/navigation";
-import ReactCountryFlag from "react-country-flag";
 import { format } from "date-fns";
+import ReactCountryFlag from "react-country-flag";
 import ptBR from "date-fns/locale/pt-BR";
+import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
+
+import { Trip } from "@prisma/client";
+
 import Button from "@/components/Button";
 
 const TripConfirmation = ({ params }: { params: { tripId: string } }) => {
     const [trip, setTrip] = useState<Trip | null>();
     const [totalPrice, setTotalPrice] = useState<number>(0);
+    
+    const router = useRouter()
+
+    const {status} = useSession()
 
     const searchParams = useSearchParams();
 
@@ -29,10 +37,16 @@ const TripConfirmation = ({ params }: { params: { tripId: string } }) => {
             const { trip, totalPrice } = await response.json();
             setTotalPrice(totalPrice);
             setTrip(trip);
-        }
+        };
 
+        if (status === "unauthenticated") {
+            router.push("/")
+        }
+    
         fetchTrip();
-    }, [])
+    }, [status]) // Esse array é uma lista de valores de que o hook depende. Quando um desses valores mudar, o hook é chamado novamente.
+
+
 
     if (!trip) return null;
 
