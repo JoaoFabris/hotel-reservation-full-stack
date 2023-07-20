@@ -12,9 +12,10 @@ interface UserReservationItemProps {
     reservation: Prisma.TripReservationGetPayload<{
         include: { trip: true }; // mostra para o prisma q foi feito um Ainclude relacionado com trip e tripreservation no schema
     }>;
+    fetchReservations: () => void;
 }
 
-const UserReservationItem = ({ reservation }: UserReservationItemProps) => {
+const UserReservationItem = ({ reservation, fetchReservations }: UserReservationItemProps) => {
 
 
     const { trip } = reservation; // pega o trip dentro do reservation, include
@@ -29,6 +30,7 @@ const UserReservationItem = ({ reservation }: UserReservationItemProps) => {
 
         toast.success("Reserva cancelada com sucesso!", { position: 'bottom-center'})
 
+        fetchReservations()
     };
 
     return (
