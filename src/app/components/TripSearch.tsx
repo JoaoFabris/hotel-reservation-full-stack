@@ -10,9 +10,9 @@ const TripSearch = () => {
     return (
         <div className="container mx-auto p-5 bg-search-background bg-center bg-no-repeat bg-cover">
             <h1 className="font-semibold text-2xl text-center">Econtre sua próxima <span className="text-primary" > Viagem!</span></h1>
-            
+
             <div className="flex flex-col gap-4 mt-5">
-                <Input placeholder="aonde você quer ir?" />
+                <Input placeholder="Aonde você quer ir?" />
 
                 <div className="flex gap-4">
                     <DatePicker placeholderText="Data de ida" onChange={() => {}}className="w-full"/>

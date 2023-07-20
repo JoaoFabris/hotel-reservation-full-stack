@@ -1,6 +1,7 @@
 import { prisma } from "@/lib/prisma";
 import { NextResponse } from "next/server";
 
+                                                      // pasta nomeada como userId
 export async function GET(request: Request, { params: { userId } }: { params: { userId: string } }) {
   const { searchParams } = new URL(request.url);
 
