@@ -22,10 +22,11 @@ const Header = () => {
 
   return (
     <div className="container mx-auto p-5 py-0 h-[93px] flex justify-between items-center lg:border-b lg:border-grayLighter">
+      <Link href='/'>
       <div className="relative h-[32px] w-[182px]">
         <Image src="/logo.png" alt="Full Stack Week" fill />
       </div>
-
+      </Link>
       {status === "unauthenticated" && (
         <button className="text-primary text-sm font-semibold" onClick={handleLoginClick}>
           Login
