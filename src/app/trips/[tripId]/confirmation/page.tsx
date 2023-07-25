@@ -27,7 +27,7 @@ const TripConfirmation = ({ params }: { params: { tripId: string } }) => {
 
     useEffect(() => {
         const fetchTrip = async () => {
-            const response = await fetch(`http://localhost:3000/api/trips/check`, {
+            const response = await fetch(`/api/trips/check`, {
                 method: "POST", //  file on the system
                 body: JSON.stringify({
                     tripId: params.tripId,
