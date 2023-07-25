@@ -31,9 +31,9 @@ const TripReservation = ({ tripId, maxGuests, tripStartDate, tripEndDate, priceP
       watch,
       setError,
     } = useForm<TripReservationForm>();
-  
+
     const router = useRouter();
-  
+
     const onSubmit = async (data: TripReservationForm) => {
       const response = await fetch("/api/trips/check", {
         method: "POST",
@@ -45,29 +45,29 @@ const TripReservation = ({ tripId, maxGuests, tripStartDate, tripEndDate, priceP
           })
         ),
       });
-  
+
       const res = await response.json();
-  
-      
+
+
     if (res?.error?.code === "TRIP_ALREADY_RESERVED") {
         setError("startDate", {
           type: "manual",
           message: "Esta data já está reservada.",
         });
-  
+
         return setError("endDate", {
           type: "manual",
           message: "Esta data já está reservada.",
         });
       }
-  
+
       if (res?.error?.code === "INVALID_START_DATE") {
         return setError("startDate", {
           type: "manual",
           message: "Data inválida.",
         });
       }
-  
+
       if (res?.error?.code === "INVALID_END_DATE") {
         return setError("endDate", {
           type: "manual",
@@ -79,7 +79,7 @@ const TripReservation = ({ tripId, maxGuests, tripStartDate, tripEndDate, priceP
     };
 
     const startDate = watch("startDate")
-    const endDate = watch("endDate") // caso a data inicial foi selecionada ele salva a data minima relativa ao q foi selecionada 
+    const endDate = watch("endDate") // caso a data inicial foi selecionada ele salva a data minima relativa ao q foi selecionada
 
     return (
         <div className="flex flex-col px-5">
