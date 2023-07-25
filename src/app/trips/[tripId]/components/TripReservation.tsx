@@ -82,8 +82,11 @@ const TripReservation = ({ tripId, maxGuests, tripStartDate, tripEndDate, priceP
     const endDate = watch("endDate") // caso a data inicial foi selecionada ele salva a data minima relativa ao q foi selecionada
 
     return (
-        <div className="flex flex-col px-5">
-            <div className="flex gap-4">
+        <div className="flex flex-col px-5 lg:min-w-[380px] lg:p-5 lg:border-grayLighter lg:border lg:rounded-lg lg:shadow-md">
+          <p className="text-xl hidden text-primaryDarker mb-4 lg:block">
+            <span className="font-semibold">R${pricePerDay}</span> por dia
+          </p>
+            <div className="flex gap-4 ">
                 <Controller
                     name="startDate"
                     rules={{
@@ -147,7 +150,7 @@ const TripReservation = ({ tripId, maxGuests, tripStartDate, tripEndDate, priceP
                     {startDate && endDate ? `R$${differenceInDays(endDate, startDate) * pricePerDay}` ?? 1 : "R$0"}
                 </p>
             </div>
-            <div className="w-full pb-10 border-b border-grayLighter">
+            <div className="w-full pb-10 border-b border-grayLighter lg:border-none lg:pb-0">
                 <Button onClick={() => handleSubmit(onSubmit)()} className="mt-3 w-full">Reservar agora</Button>
             </div>
 
