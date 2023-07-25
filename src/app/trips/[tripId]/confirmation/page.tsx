@@ -1,4 +1,4 @@
-'use client'
+"use client";
 
 import React, { useEffect, useState } from "react";
 import Image from "next/image";
@@ -11,13 +11,14 @@ import { useRouter } from "next/navigation";
 
 import Button from "@/components/Button";
 
+import {loadStripe} from '@stripe/stripe-js';
 import { Trip } from "@prisma/client";
 import { toast } from "react-toastify";
 
 const TripConfirmation = ({ params }: { params: { tripId: string } }) => {
     const [trip, setTrip] = useState<Trip | null>();
     const [totalPrice, setTotalPrice] = useState<number>(0);
-    
+
     const router = useRouter()
 
     const { status, data } = useSession();
@@ -48,32 +49,41 @@ const TripConfirmation = ({ params }: { params: { tripId: string } }) => {
         if (status === "unauthenticated") {
             router.push("/")
         }
-    
+
         fetchTrip();
     }, [status, searchParams, params, router]) // Esse array é uma lista de valores de que o hook depende. Quando um desses valores mudar, o hook é chamado novamente.
 
     if (!trip) return null;
 
     const handleBuyClick = async () => {
-        const res = await fetch("http://localhost:3000/api/trips/reservation", {
-            method: "POST",
-            body: Buffer.from(
-              JSON.stringify({
-                tripId: params.tripId,
-                startDate: searchParams.get("startDate"),
-                endDate: searchParams.get("endDate"),
-                guests: Number(searchParams.get("guests")),
-                totalPaid: totalPrice,
-                userId: (data?.user as any)?.id!
-              })
-            ),
-          });
-      
-          if (!res.ok) {
-            return toast.error("Ocorreu um erro ao realizar a reserva!", { position: "bottom-center" });
-          }
+        const res = await fetch("/api/payment", {
+          method: "POST",
+          body: Buffer.from(
+            JSON.stringify({
+              tripId: params.tripId,
+              startDate: searchParams.get("startDate"),
+              endDate: searchParams.get("endDate"),
+              guests: Number(searchParams.get("guests")),
+              totalPrice,
+              coverImage: trip.coverImage,
+              name: trip.name,
+              description: trip.description,
+            })
+          ),
+        });
 
-        toast.success("Reserva realizada com sucesso!", { position: "bottom-center"})
+        if (!res.ok) {
+            return toast.error("Ocorreu um erro ao realizar a reserva!", { position: "bottom-center" });
+        }
+
+
+        const { sessionId } = await res.json();
+
+        const stripe = await loadStripe(process.env.NEXT_PUBLIC_STRIPE_KEY as string);
+
+        await stripe?.redirectToCheckout({ sessionId });// redicirect para o checkout com o sessionid
+
+        toast.success("Reserva realizada com sucesso!", { position: "bottom-center" })
     };
 
     const startDate = new Date(searchParams.get("startDate") as string);
@@ -117,7 +127,7 @@ const TripConfirmation = ({ params }: { params: { tripId: string } }) => {
                 <h3 className="font-semibold mt-5">Hóspedes:</h3>
 
                 <p>{guests} hóspedes</p>
-            <Button className="mt-5" onClick={handleBuyClick}>Finalizar compra</Button>
+                <Button className="mt-5" onClick={handleBuyClick}>Finalizar compra</Button>
             </div>
         </div>
     )

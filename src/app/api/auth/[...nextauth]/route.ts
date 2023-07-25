@@ -16,7 +16,7 @@ export const authOptions: AuthOptions = {
   secret: process.env.NEXTAUTH_SECRET,
   callbacks: {
     async session({ session, token, user }) {
-      session.user = { ...session.user, id: user.id } as { id: string; name: string; email: string }; // traz o id da sessão
+      session.user = { ...session.user, id: user.id } as { id: string; name: string; email: string };
 
       return session;
     },
@@ -26,6 +26,7 @@ export const authOptions: AuthOptions = {
 const handler = NextAuth(authOptions);
 
 export { handler as GET, handler as POST };
+
 
 // inicia na aplicação, e use os provider q eu adaptei, no caso google adapter
 
