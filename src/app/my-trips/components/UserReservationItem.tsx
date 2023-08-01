@@ -10,7 +10,7 @@ import { useRouter } from "next/router";
 
 interface UserReservationItemProps {
     reservation: Prisma.TripReservationGetPayload<{
-        include: { trip: true }; // mostra para o prisma q foi feito um Ainclude relacionado com trip e tripreservation no schema
+        include: { trip: true }; // mostra para o prisma q foi feito um include relacionado com trip e tripreservation no schema
     }>;
     fetchReservations: () => void;
 }
@@ -30,7 +30,7 @@ const UserReservationItem = ({ reservation, fetchReservations }: UserReservation
 
         toast.success("Reserva cancelada com sucesso!", { position: 'bottom-center'})
 
-        fetchReservations()
+        fetchReservations() // atualiza a pagina !! apos o delete
     };
 
     return (

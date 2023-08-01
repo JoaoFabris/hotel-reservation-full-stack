@@ -1,7 +1,6 @@
 import { prisma } from "@/lib/prisma";
 import { NextResponse } from "next/server";
 
-                                                      // pasta nomeada como userId
 export async function GET(request: Request, { params: { userId } }: { params: { userId: string } }) {
   const { searchParams } = new URL(request.url);
 
@@ -29,6 +28,3 @@ export async function GET(request: Request, { params: { userId } }: { params: { 
 
   return new NextResponse(JSON.stringify(reservations), { status: 200 });
 }
-
-
-// faz um join na tabela de trip

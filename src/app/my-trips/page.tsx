@@ -31,6 +31,8 @@ const MyTrips = () => {
   useEffect(() => {
     if (status === "unauthenticated") {
       return router.push("/");
+      console.log({ data });
+
     }
 
     fetchReservations();

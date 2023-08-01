@@ -13,7 +13,7 @@ async function main() {
         description:
           "O Hotel Aurora é um refúgio encantador situado em meio às majestosas montanhas. Com seus jardins exuberantes e uma arquitetura elegante, o Aurora oferece quartos espaçosos e bem decorados, gastronomia premiada, um spa luxuoso e uma variedade de instalações de lazer. É o lugar perfeito para os viajantes que buscam uma escapada relaxante e rejuvenescedora, proporcionando uma experiência memorável em um cenário deslumbrante.",
         startDate: new Date("2023-07-03"),
-        endDate: new Date("2023-07-30"),
+        endDate: new Date("2023-08-30"),
         location: "Amalfi, Itália",
         countryCode: "IT",
         coverImage:
