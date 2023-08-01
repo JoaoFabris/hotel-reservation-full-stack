@@ -24,6 +24,7 @@ function DatePicker({ className, error, errorMessage, ...props }: InputProps, re
       <_DatePicker
         dateFormat="dd/MM/yyyy"
         locale="pt-BR"
+        dateFormatCalendar="dd/MM/yyyy"
         wrapperClassName="w-full"
         className={datePickerClassName}
         enableTabLoop={false}

@@ -17,6 +17,7 @@ const Trips = () => {
       );
 
       const data = await response.json();
+      console.log(data);
 
       setTrips(data);
     };
