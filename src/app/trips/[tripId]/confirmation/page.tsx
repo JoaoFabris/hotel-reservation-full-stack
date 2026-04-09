@@ -1,140 +1,163 @@
-"use client";
+'use client';
 
-import React, { useEffect, useState } from "react";
-import Image from "next/image";
-import { useSearchParams } from "next/navigation";
-import { format } from "date-fns";
-import ReactCountryFlag from "react-country-flag";
-import ptBR from "date-fns/locale/pt-BR";
-import { useSession } from "next-auth/react";
-import { useRouter } from "next/navigation";
+import React, { useEffect, useState } from 'react';
+import Image from 'next/image';
+import { useSearchParams } from 'next/navigation';
+import { format } from 'date-fns';
+import ReactCountryFlag from 'react-country-flag';
+import ptBR from 'date-fns/locale/pt-BR';
+import { useSession } from 'next-auth/react';
+import { useRouter } from 'next/navigation';
+import { signIn } from 'next-auth/react';
 
-import Button from "@/components/Button";
+import Button from '@/components/Button';
 
 import { loadStripe } from '@stripe/stripe-js';
-import { Trip } from "@prisma/client";
-import { toast } from "react-toastify";
+import { Trip } from '@prisma/client';
+import { toast } from 'react-toastify';
 
 const TripConfirmation = ({ params }: { params: { tripId: string } }) => {
-    const [trip, setTrip] = useState<Trip | null>();
-    const [totalPrice, setTotalPrice] = useState<number>(0);
+  const [trip, setTrip] = useState<Trip | null>();
+  const [totalPrice, setTotalPrice] = useState<number>(0);
 
-    const router = useRouter()
+  const router = useRouter();
 
-    const { status, data } = useSession();
+  const { status, data } = useSession();
 
-    const searchParams = useSearchParams();
+  const searchParams = useSearchParams();
 
-    useEffect(() => {
-        const fetchTrip = async () => {
-            const response = await fetch(`/api/trips/check`, {
-                method: "POST", //  file on the system
-                body: JSON.stringify({
-                    tripId: params.tripId,
-                    startDate: searchParams.get("startDate"), // essas params sao passadas como query params (?) data.startDate?.toISOString()}&endDate=
-                    endDate: searchParams.get("endDate"),   // essas params sao passadas como query params (?) data.startDate?.toISOString()}&endDate=
-                }),
-            });
+  useEffect(() => {
+    const fetchTrip = async () => {
+      const response = await fetch(`/api/trips/check`, {
+        method: 'POST', //  file on the system
+        body: JSON.stringify({
+          tripId: params.tripId,
+          startDate: searchParams.get('startDate'), // essas params sao passadas como query params (?) data.startDate?.toISOString()}&endDate=
+          endDate: searchParams.get('endDate'), // essas params sao passadas como query params (?) data.startDate?.toISOString()}&endDate=
+        }),
+      });
 
-            const res = await response.json();
+      const res = await response.json();
 
-            if (res?.error) {
-                return router.push("/") // evita q o usuario tente mudar a data manualmente na url... se o valor corresponder a algum erro, ele redireciona para ("/")
-            };
+      if (res?.error) {
+        return router.push('/'); // evita q o usuario tente mudar a data manualmente na url... se o valor corresponder a algum erro, ele redireciona para ("/")
+      }
 
-            setTrip(res.trip);
-            setTotalPrice(res.totalPrice);
-        };
-
-        if (status === "unauthenticated") {
-            router.push("/")
-        }
-
-        fetchTrip();
-    }, [status, searchParams, params, router]) // Esse array é uma lista de valores de que o hook depende. Quando um desses valores mudar, o hook é chamado novamente.
-
-    if (!trip) return null;
-
-    const handleBuyClick = async () => {
-        const res = await fetch("/api/payment", {
-            method: "POST",
-            body: Buffer.from(
-                JSON.stringify({
-                    tripId: params.tripId,
-                    startDate: searchParams.get("startDate"),
-                    endDate: searchParams.get("endDate"),
-                    guests: Number(searchParams.get("guests")),
-                    totalPrice,
-                    coverImage: trip.coverImage,
-                    name: trip.name,
-                    description: trip.description,
-                })
-            ),
-        });
-
-        if (!res.ok) {
-            return toast.error("Ocorreu um erro ao realizar a reserva!", { position: "bottom-center" });
-        }
-
-
-        const { sessionId } = await res.json();
-
-        const stripe = await loadStripe(process.env.NEXT_PUBLIC_STRIPE_KEY as string);
-
-        await stripe?.redirectToCheckout({ sessionId });// redicirect para o checkout com o sessionid
-
-        toast.success("Reserva realizada com sucesso!", { position: "bottom-center" })
+      setTrip(res.trip);
+      setTotalPrice(res.totalPrice);
     };
 
-    const startDate = new Date(searchParams.get("startDate") as string);
-    const endDate = new Date(searchParams.get("endDate") as string);
-    const guests = searchParams.get("guests")
+    if (status === 'loading') return;
 
-    return (
-        <div className="container mx-auto p-5 lg:max-w-[600px]">
-            <div className="container mx-auto p-5">
-                <h1 className="font-semibold text-xl text-primaryDarker"> Sua viagem </h1>
+    if (status === 'unauthenticated') {
+      signIn('google', { callbackUrl: window.location.href });
+      return;
+    }
+    fetchTrip();
+  }, [status, searchParams, params, router]); // Esse array é uma lista de valores de que o hook depende. Quando um desses valores mudar, o hook é chamado novamente.
 
-                <div className="flex flex-col p-5 mt-5 border-grayLighter border-solid border shadow-lg rounded-lg">
-                    <div className="flex items-center gap-3 pb-5 border-b border-grayLighter border-solid">
-                        <div className="relative h-[106px] w-[124px]">
-                            <Image src={trip.coverImage} fill style={{ objectFit: "cover" }} className="rounded-lg" alt={trip.name} />
-                        </div>
+  if (!trip) return null;
 
-                        <div className="flex flex-col">
-                            <h2 className="text-xl text-primaryDarker font-semibold">{trip.name}</h2>
-                            <div className="flex items-center gap-1">
-                                <ReactCountryFlag countryCode={trip.countryCode} svg />
-                                <p className="text-xs text-grayPrimary underline">{trip.location}</p>
-                            </div>
-                        </div>
-                    </div>
+  const handleBuyClick = async () => {
+    const res = await fetch('/api/payment', {
+      method: 'POST',
+      body: Buffer.from(
+        JSON.stringify({
+          tripId: params.tripId,
+          startDate: searchParams.get('startDate'),
+          endDate: searchParams.get('endDate'),
+          guests: Number(searchParams.get('guests')),
+          totalPrice,
+          coverImage: trip.coverImage,
+          name: trip.name,
+          description: trip.description,
+        }),
+      ),
+    });
 
-                    <h3 className="font-semibold text-lg text-primaryDarker mt-3">Informações sobre o preço</h3>
+    if (!res.ok) {
+      return toast.error('Ocorreu um erro ao realizar a reserva!', {
+        position: 'bottom-center',
+      });
+    }
 
-                    <div className="flex justify-between mt-1">
-                        <p className="text-primaryDarker">Total:</p>
-                        <p className="font-medium">R${totalPrice}</p>
-                    </div>
-                </div>
+    const { sessionId } = await res.json();
 
-                <div className="flex flex-col mt-5 text-primaryDarker">
-                    <h3 className="font-semibold ">Data:</h3>
-                    <div className="flex item-center gap-1 mt-1">
-                        <p>{format(startDate, "dd 'de' MMMM", { locale: ptBR })}</p>
-                        {" - "}
-                        <p>{format(endDate, "dd 'de' MMMM", { locale: ptBR })}</p>
-                    </div>
-                    <h3 className="font-semibold mt-5">Hóspedes:</h3>
+    const stripe = await loadStripe(
+      process.env.NEXT_PUBLIC_STRIPE_KEY as string,
+    );
 
-                    <p>{guests} hóspedes</p>
-                    <Button className="mt-5" onClick={handleBuyClick}>Finalizar compra</Button>
-                </div>
+    await stripe?.redirectToCheckout({ sessionId }); // redicirect para o checkout com o sessionid
+
+    toast.success('Reserva realizada com sucesso!', {
+      position: 'bottom-center',
+    });
+  };
+
+  const startDate = new Date(searchParams.get('startDate') as string);
+  const endDate = new Date(searchParams.get('endDate') as string);
+  const guests = searchParams.get('guests');
+
+  return (
+    <div className="container mx-auto p-5 lg:max-w-[600px]">
+      <div className="container mx-auto p-5">
+        <h1 className="font-semibold text-xl text-primaryDarker">
+          {' '}
+          Sua viagem{' '}
+        </h1>
+
+        <div className="flex flex-col p-5 mt-5 border-grayLighter border-solid border shadow-lg rounded-lg">
+          <div className="flex items-center gap-3 pb-5 border-b border-grayLighter border-solid">
+            <div className="relative h-[106px] w-[124px]">
+              <Image
+                src={trip.coverImage}
+                fill
+                style={{ objectFit: 'cover' }}
+                className="rounded-lg"
+                alt={trip.name}
+              />
             </div>
-        </div>
-    )
 
-}
+            <div className="flex flex-col">
+              <h2 className="text-xl text-primaryDarker font-semibold">
+                {trip.name}
+              </h2>
+              <div className="flex items-center gap-1">
+                <ReactCountryFlag countryCode={trip.countryCode} svg />
+                <p className="text-xs text-grayPrimary underline">
+                  {trip.location}
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <h3 className="font-semibold text-lg text-primaryDarker mt-3">
+            Informações sobre o preço
+          </h3>
+
+          <div className="flex justify-between mt-1">
+            <p className="text-primaryDarker">Total:</p>
+            <p className="font-medium">R${totalPrice}</p>
+          </div>
+        </div>
+
+        <div className="flex flex-col mt-5 text-primaryDarker">
+          <h3 className="font-semibold ">Data:</h3>
+          <div className="flex item-center gap-1 mt-1">
+            <p>{format(startDate, "dd 'de' MMMM", { locale: ptBR })}</p>
+            {' - '}
+            <p>{format(endDate, "dd 'de' MMMM", { locale: ptBR })}</p>
+          </div>
+          <h3 className="font-semibold mt-5">Hóspedes:</h3>
+
+          <p>{guests} hóspedes</p>
+          <Button className="mt-5" onClick={handleBuyClick}>
+            Finalizar compra
+          </Button>
+        </div>
+      </div>
+    </div>
+  );
+};
 
 export default TripConfirmation;
-
