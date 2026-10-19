@@ -24,7 +24,7 @@ const TripSearch = () => {
 
     return ( // apenas para desktop e acima -> lg:
         <div className="container mx-auto p-5 bg-search-background bg-cover bg-center bg-no-repeat lg:py-28">
-            <h1 className="font-semibold text-2xl text-primaryDarker text-center lg:text-[2.5rem]">Econtre sua próxima <span className="text-primary" > Viagem!</span></h1>
+            <h1 className="font-semibold text-2xl text-primaryDarker text-center lg:text-[2.5rem]">Encontre sua próxima <span className="text-primary" > Viagem!</span></h1>
 
             <div className="flex flex-col gap-4 mt-5 lg:flex-row lg:max-w-[1300px] lg:mx-auto lg:p-4 lg:mt-12 lg:bg-opacity-20 lg:rounded-lg">
                 <Input
