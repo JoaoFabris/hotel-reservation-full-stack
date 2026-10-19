@@ -1,6 +1,30 @@
-# 🌍 Travel Reservation
+# 🌍 Trips — Travel Reservation
 
 Plataforma full stack de reservas de viagens e hospedagens com autenticação social, pagamentos integrados via Stripe e gerenciamento completo de reservas por usuário.
+
+**🔗 Demo online:** [hotel-reservation-full-stack.vercel.app](https://hotel-reservation-full-stack.vercel.app)
+
+> Pagamentos em modo de teste do Stripe: use o cartão `4242 4242 4242 4242`, qualquer data futura e qualquer CVC.
+
+<p align="center">
+  <img src="docs/screenshots/hero.png" alt="Página inicial com busca de destinos e hospedagens recomendadas" width="900">
+</p>
+
+---
+
+## 📸 Telas
+
+| Detalhes da hospedagem | Reserva com cálculo do total |
+|---|---|
+| <img src="docs/screenshots/trip-details.png" width="420"> | <img src="docs/screenshots/booking.png" width="420"> |
+
+| Confirmação da viagem | Checkout com Stripe |
+|---|---|
+| <img src="docs/screenshots/confirmation.png" width="420"> | <img src="docs/screenshots/checkout-stripe.png" width="420"> |
+
+<p align="center">
+  <img src="docs/screenshots/destinations.png" alt="Destinos recomendados" width="700">
+</p>
 
 ---
 
@@ -44,8 +68,8 @@ Plataforma full stack de reservas de viagens e hospedagens com autenticação so
 ### 1. Clone o repositório
 
 ```bash
-git clone https://github.com/seu-usuario/hotel-reservation.git
-cd hotel-reservation
+git clone https://github.com/JoaoFabris/hotel-reservation-full-stack.git
+cd hotel-reservation-full-stack
 ```
 
 ### 2. Instale as dependências
