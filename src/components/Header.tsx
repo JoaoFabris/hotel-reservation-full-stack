@@ -23,8 +23,15 @@ const Header = () => {
   return (
     <div className="container mx-auto p-5 py-0 h-[93px] flex justify-between items-center lg:border-b lg:border-grayLighter">
       <Link href='/'>
-        <div className="relative h-[32px] w-[182px]">
-          <Image src="/logo.png" alt="Fullstack" fill />
+        <div className="relative h-[48px] w-[190px] shrink-0">
+          <Image
+            src="/logo.png"
+            alt="trips"
+            width={190}
+            height={48}
+            priority
+            className="h-full w-full object-contain object-left"
+          />
         </div>
       </Link>
       {status === "unauthenticated" && (
